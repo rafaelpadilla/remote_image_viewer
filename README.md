@@ -20,7 +20,7 @@ A Flask-based web application that allows users to visualize images from a remot
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/remote-image-viewer.git
+git clone https://github.com/rafaelpadilla/remote-image-viewer.git
 cd remote-image-viewer
 ```
 
@@ -36,10 +36,10 @@ export NGROK_API_KEY='your-ngrok-api-key'
 
 ## Usage 🚀
 
-Run the image visualization server using the `export_visualization.py` script:
+Run the image visualization server using the `main.py` script:
 
 ```bash
-python export_visualization.py [OPTIONS] DIRECTORY
+python main.py [OPTIONS] DIRECTORY
 
 Options:
   --images-per-page INTEGER  Number of images to display per page (default: 20)
@@ -49,7 +49,7 @@ Options:
 
 Example:
 ```bash
-python export_visualization.py /path/to/images --images-per-page 30 --port 5000 --scrambled
+python main.py /path/to/images --images-per-page 30 --port 5000 --scrambled
 ```
 
 ## Development 🛠️
@@ -59,14 +59,3 @@ To run tests:
 pytest
 ```
 
-## License ⚖️
-
-MIT License
-
-## Contributing 🤝
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
