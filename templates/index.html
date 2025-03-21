@@ -25,12 +25,38 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
+            position: relative;
         }
 
         .image-container img {
             max-width: 100%;
             height: auto;
             border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-container:hover .hover-zoom {
+            display: block;
+        }
+
+        .hover-zoom {
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            max-width: max-content;
+        }
+
+        .hover-zoom img {
+            max-width: 100%;
+            height: auto;
         }
 
         .image-name {
@@ -38,6 +64,12 @@
             font-size: 14px;
             color: #333;
             word-break: break-all;
+        }
+
+        .image-link {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
         }
 
         .pagination {
@@ -66,8 +98,13 @@
     <div class="image-grid">
         {% for index, image in images %}
             <div class="image-container">
-                <img src="{{ url_for('serve_image', index=index) }}" alt="{{ image.name }}">
-                <div class="image-name">{{ image.name }}</div>
+                <a href="{{ url_for('serve_image', index=index) }}" target="_blank" class="image-link">
+                    <img src="{{ url_for('serve_image', index=index) }}" alt="{{ image.name }}">
+                    <div class="image-name">{{ image.name }}</div>
+                </a>
+                <div class="hover-zoom">
+                    <img src="{{ url_for('serve_image', index=index) }}" alt="{{ image.name }}">
+                </div>
             </div>
         {% endfor %}
     </div>
