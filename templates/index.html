@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Image Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .image-container {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .image-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-grid">
+        {% for index, image in images %}
+            <div class="image-container">
+                <img src="{{ url_for('serve_image', index=index) }}" alt="{{ image.name }}">
+                <div class="image-name">{{ image.name }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
+        <button id="nextPage" onclick="changePage(1)">Next</button>
+    </div>
+
+    <script>
+        const imagesPerPage = {{ images_per_page }};
+        const imageContainers = document.querySelectorAll('.image-container');
+        let currentPage = 0;
+
+        function updateVisibility() {
+            const start = currentPage * imagesPerPage;
+            const end = start + imagesPerPage;
+
+            imageContainers.forEach((container, index) => {
+                container.style.display = (index >= start && index < end) ? 'block' : 'none';
+            });
+
+            document.getElementById('prevPage').disabled = currentPage === 0;
+            document.getElementById('nextPage').disabled = end >= imageContainers.length;
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            updateVisibility();
+        }
+
+        // Initialize page
+        updateVisibility();
+    </script>
+</body>
+</html>
