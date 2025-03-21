@@ -41,18 +41,15 @@
 
         .hover-zoom {
             display: none;
-            position: absolute;
+            position: fixed;
             z-index: 1000;
-            top: 50%;
-            left: 100%;
-            transform: translateY(-50%);
             background: white;
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 600px;
             max-width: max-content;
-            margin-left: 20px;
+            pointer-events: none;
         }
 
         .hover-zoom img {
@@ -138,6 +135,47 @@
             currentPage += delta;
             updateVisibility();
         }
+
+        // Add mouse tracking for hover zoom with boundary checking
+        document.querySelectorAll('.image-container').forEach(container => {
+            const hoverZoom = container.querySelector('.hover-zoom');
+
+            container.addEventListener('mousemove', (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+
+                // Get viewport dimensions
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                // Get hover zoom dimensions
+                const hoverWidth = hoverZoom.offsetWidth;
+                const hoverHeight = hoverZoom.offsetHeight;
+
+                // Calculate position while keeping the hover zoom within viewport
+                let left = x;
+                let top = y;
+
+                // Adjust horizontal position
+                if (x + (hoverWidth / 2) > viewportWidth) {
+                    left = viewportWidth - (hoverWidth / 2);
+                } else if (x - (hoverWidth / 2) < 0) {
+                    left = hoverWidth / 2;
+                }
+
+                // Adjust vertical position
+                if (y + (hoverHeight / 2) > viewportHeight) {
+                    top = viewportHeight - (hoverHeight / 2);
+                } else if (y - (hoverHeight / 2) < 0) {
+                    top = hoverHeight / 2;
+                }
+
+                // Apply the calculated position
+                hoverZoom.style.left = left + 'px';
+                hoverZoom.style.top = top + 'px';
+                hoverZoom.style.transform = 'translate(-50%, -50%)';
+            });
+        });
 
         // Initialize page
         updateVisibility();

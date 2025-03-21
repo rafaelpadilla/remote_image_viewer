@@ -61,7 +61,7 @@ def serve_image(index):
 
 def serve_images(
     directory: str,
-    images_per_page: int = 20,
+    n: int = 20,
     port: int = 5000,
     scrambled: bool = False
 ) -> None:
@@ -70,7 +70,7 @@ def serve_images(
 
     Args:
         directory: Directory containing images to serve
-        images_per_page: Number of images to display per page (default: 20)
+        n: Number of images to display per page (default: 20)
         port: Port to run the server on (default: 5000)
         scrambled: Whether to display images in random order (default: False)
     """
@@ -83,7 +83,7 @@ def serve_images(
     # Set up global variables
     global IMAGES_DIR, IMAGES_PER_PAGE, SCRAMBLED, IMAGE_LIST
     IMAGES_DIR = image_dir
-    IMAGES_PER_PAGE = images_per_page
+    IMAGES_PER_PAGE = n
     SCRAMBLED = scrambled
     IMAGE_LIST = get_image_files(IMAGES_DIR, SCRAMBLED)
 
