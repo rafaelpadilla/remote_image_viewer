@@ -3,15 +3,15 @@
 Script to serve a directory of images through a web interface using Flask and ngrok.
 """
 
-import os
 import random
 from pathlib import Path
+import subprocess
+import threading
 from typing import List, Optional
 
-from flask import Flask, render_template, send_file
-from pyngrok import ngrok
-from dotenv import load_dotenv
 import fire
+from flask import Flask, render_template, send_file
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -24,16 +24,17 @@ IMAGES_PER_PAGE: int = 20
 SCRAMBLED: bool = False
 IMAGE_LIST: List[Path] = []
 
+
 def is_image_file(file_path: Path) -> bool:
     """Check if a file is an image based on its extension."""
-    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+    image_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
     return file_path.suffix.lower() in image_extensions
+
 
 def get_image_files(directory: Path, scrambled: bool = False) -> List[Path]:
     """Get all image files from the directory."""
     image_files = [
-        f for f in directory.glob('**/*')
-        if f.is_file() and is_image_file(f)
+        f for f in directory.glob("**/*") if f.is_file() and is_image_file(f)
     ]
 
     if scrambled:
@@ -43,27 +44,47 @@ def get_image_files(directory: Path, scrambled: bool = False) -> List[Path]:
 
     return image_files
 
-@app.route('/')
+
+@app.route("/")
 def index():
     """Render the main page with image grid."""
     return render_template(
-        'index.html',
-        images=enumerate(IMAGE_LIST),
-        images_per_page=IMAGES_PER_PAGE
+        "index.html", images=enumerate(IMAGE_LIST), images_per_page=IMAGES_PER_PAGE
     )
 
-@app.route('/image/<int:index>')
+
+@app.route("/image/<int:index>")
 def serve_image(index):
     """Serve an image file."""
     if 0 <= index < len(IMAGE_LIST):
         return send_file(IMAGE_LIST[index])
-    return 'Image not found', 404
+    return "Image not found", 404
 
-def serve_images(
-    directory: str,
-    n: int = 20,
-    port: int = 5000,
-    scrambled: bool = False
+
+def start_localhost_run(port: int):
+    tunnel = subprocess.Popen(
+        [
+            "ssh",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-R",
+            f"80:localhost:{port}",
+            "localhost.run",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    for line in tunnel.stdout:
+        print(line.decode(), end="")
+
+
+def start_flask(port: int):
+    app.run(port=port)
+
+
+def main(
+    directory: str, n: int = 20, port: int = 5000, scrambled: bool = False
 ) -> None:
     """
     Serve a directory of images through a web interface using Flask and ngrok.
@@ -91,24 +112,11 @@ def serve_images(
         print(f"Error: No images found in {directory}")
         return 1
 
-    # Set up ngrok
-    ngrok_api_key = os.getenv('NGROK_API_KEY')
-    if not ngrok_api_key:
-        print("Error: NGROK_API_KEY environment variable not set")
-        return 1
+    # Run Flask in background thread
+    threading.Thread(target=start_flask, args=(port,), daemon=True).start()
 
-    ngrok.set_auth_token(ngrok_api_key)
+    start_localhost_run(port)
 
-    # Start ngrok tunnel
-    public_url = ngrok.connect(port).public_url
-    print(f"Public URL: {public_url}")
 
-    # Start Flask app
-    app.run(port=port)
-
-def main():
-    """Main entry point for the script."""
-    fire.Fire(serve_images)
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    fire.Fire(main)
