@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to serve a directory of images through a web interface using Flask and ngrok.
+Script to serve a directory of images through a web interface using Flask and localhost.run.
 """
 
 import random
@@ -87,7 +87,7 @@ def main(
     directory: str, n: int = 20, port: int = 5000, scrambled: bool = False
 ) -> None:
     """
-    Serve a directory of images through a web interface using Flask and ngrok.
+    Serve a directory of images through a web interface using Flask and localhost.run.
 
     Args:
         directory: Directory containing images to serve
