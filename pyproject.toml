@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "telepic"
-version = "0.1.7"
+version = "0.1.8"
 description = "A lightweight CLI tool + web app for remotely viewing images from any machine in your browser. It is well-suited for sharing your images remotely."
 readme = "README.md"
 dependencies = [
@@ -49,9 +49,13 @@ telepic = "telepic.main:_entry_point"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"telepic" = ["templates/*.html", "static/*"]
 
 [tool.ruff]
 line-length = 88

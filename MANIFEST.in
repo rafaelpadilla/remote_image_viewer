@@ -1,0 +1,2 @@
+include src/telepic/templates/*.html
+include src/telepic/static/*
