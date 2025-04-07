@@ -36,13 +36,6 @@ def main(
         scrambled: Whether to display images in random order (default: False)
         version: If True, print the version and exit
     """
-    # Check if the port is already in use
-    if is_port_in_use(port):
-        print(
-            f"Error: Port {port} is already in use. Please specify a different port with the --port option."
-        )
-        return
-
     # Check if version flag is provided
     if version:
         print(f"telepic version {__version__}")
@@ -57,6 +50,13 @@ def main(
     image_dir = Path(directory)
     if not image_dir.is_dir():
         print(f"Error: {directory} is not a valid directory")
+        return
+
+    # Check if the port is already in use
+    if is_port_in_use(port):
+        print(
+            f"Error: Port {port} is already in use. Please specify a different port with the --port option."
+        )
         return
 
     # Set up configuration
