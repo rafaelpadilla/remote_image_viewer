@@ -8,6 +8,9 @@
   <a href="https://github.com/rafaelpadilla/telepic/actions/workflows/ci.yml">
     <img src="https://github.com/rafaelpadilla/telepic/actions/workflows/ci.yml/badge.svg" alt="CI Status">
   </a>
+  <a href="https://github.com/sponsors/rafaelpadilla">
+    <img src="https://img.shields.io/badge/Sponsor-Support%20this%20project-brightgreen?logo=github&logoColor=white&style=flat" alt="Sponsor: Support this project">
+  </a>
   <a href="https://pypi.org/project/telepic/">
     <img src="https://img.shields.io/pypi/v/telepic.svg" alt="Version">
   </a>
