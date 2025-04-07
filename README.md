@@ -10,7 +10,7 @@
   <a href="https://github.com/sponsors/rafaelpadilla"> <img src="https://img.shields.io/badge/Sponsor-Support%20us-brightgreen?logo=github&logoColor=white&style=flat" alt="Sponsor: Support us"></a>
 </p>
 
-**Telepic** – "tele" (distance) + "pic" (picture) – is a lightweight and easy-to-use CLI tool + Flask web app that allows you to remotely visualize images from a server (e.g. a VM or EC2) in your browser – wherever you are 🌍.
+**Telepic** (*tele* = distance + *pic* = picture) is a lightweight and easy-to-use CLI tool + Flask web app that allows you to remotely visualize images from a server (e.g. a VM or EC2) in your browser – wherever you are 🌍.
 
 No need to set up complex SSH tunnels or file syncing — just run `telepic <YOUR-IMAGE-FOLDER` on the remote machine, and get a shareable link to view your images from anywhere!
 
