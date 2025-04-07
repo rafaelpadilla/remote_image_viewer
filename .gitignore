@@ -32,6 +32,7 @@ coverage.xml
 *.cover
 .pytest_cache/
 pytest-report/
+.pypirc
 
 # Virtual Environments
 env/
