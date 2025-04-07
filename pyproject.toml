@@ -18,6 +18,22 @@ authors = [
   { name = "Rafael Padilla" }
 ]
 license="Apache-2.0"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Typing :: Typed",
+  "Topic :: Utilities"
+]
 keywords = ["telepic", "image-viewer", "remote-view", "cli-tool", "image-sharing", "remote-access", "localhost-tunnel", "web-gallery", "server-images"]
 
 
