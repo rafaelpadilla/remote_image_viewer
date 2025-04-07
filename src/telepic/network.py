@@ -57,13 +57,6 @@ def start_flask(app: Any, port: int) -> None:
         app: The Flask application to run
         port: The port on which to run the Flask server
     """
-    # Check if the port is already in use
-    if is_port_in_use(port):
-        print(
-            f"Error: Port {port} is already in use. Please specify a different port with the --port option."
-        )
-        sys.exit(1)
-
     try:
         app.run(port=port)
     except OSError as e:

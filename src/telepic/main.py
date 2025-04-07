@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 from telepic.utils import get_image_files
 from telepic.web import app
-from telepic.network import start_localhost_run, start_flask
+from telepic.network import start_localhost_run, start_flask, is_port_in_use
 from telepic.config import config, DEFAULT_IMAGES_PER_PAGE, DEFAULT_PORT
 from telepic import __version__
 
@@ -36,6 +36,13 @@ def main(
         scrambled: Whether to display images in random order (default: False)
         version: If True, print the version and exit
     """
+    # Check if the port is already in use
+    if is_port_in_use(port):
+        print(
+            f"Error: Port {port} is already in use. Please specify a different port with the --port option."
+        )
+        return
+
     # Check if version flag is provided
     if version:
         print(f"telepic version {__version__}")
