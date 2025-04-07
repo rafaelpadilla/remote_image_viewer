@@ -3,7 +3,7 @@ Web views and Flask application for the telepic application.
 """
 
 from flask import Flask, render_template, send_file, Response, jsonify, request
-from typing import Union, Tuple, Dict, Any
+from typing import Union, Tuple
 
 from telepic.config import config
 
@@ -41,7 +41,7 @@ def index() -> str:
 
 
 @app.route("/api/images")
-def get_images() -> Dict[str, Any]:
+def get_images() -> Response:
     """
     API endpoint to get a page of images.
 
@@ -49,7 +49,7 @@ def get_images() -> Dict[str, Any]:
         page: The page number (0-indexed)
 
     Returns:
-        Dict: JSON response with image data for the requested page
+        Response: JSON response with image data for the requested page
     """
     page = request.args.get("page", 0, type=int)
     start_idx = page * config.images_per_page
