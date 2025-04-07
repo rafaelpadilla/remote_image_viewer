@@ -29,7 +29,7 @@ def start_localhost_run(port: int) -> None:
         stderr=subprocess.PIPE,
     )
 
-    for line in tunnel.stdout:
+    for line in tunnel.stdout:  # type: ignore
         print(line.decode(), end="")
 
 
