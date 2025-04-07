@@ -17,7 +17,7 @@ dependencies = [
 authors = [
   { name = "Rafael Padilla" }
 ]
-license="Apache 2.0"
+license="Apache-2.0"
 packages=["telepic"]
 keywords = ["telepic", "image-viewer", "remote-view", "cli-tool", "image-sharing", "remote-access", "localhost-tunnel", "web-gallery", "server-images"]
 
