@@ -4,7 +4,6 @@ Script to serve a directory of images through a web interface using Flask and lo
 """
 
 import threading
-import time
 from pathlib import Path
 
 import fire
@@ -40,18 +39,18 @@ def main(
     # Check if version flag is provided
     if version:
         print(f"telepic version {__version__}")
-        return 0
+        return
 
     # Check if directory is provided
     if not directory:
         print("Error: Please provide a directory containing images")
-        return 1
+        return
 
     # Validate directory
     image_dir = Path(directory)
     if not image_dir.is_dir():
         print(f"Error: {directory} is not a valid directory")
-        return 1
+        return
 
     # Set up configuration
     config.images_dir = image_dir
@@ -62,26 +61,14 @@ def main(
     print(f"Total images found: {config.total_images}")
     if not config.image_list:
         print(f"Error: No images found in {directory}")
-        return 1
-
-    # Use a shared variable to track the actual port used
-    actual_port = [port]
-
-    # Function to be run in a thread for Flask
-    def run_flask_server():
-        success, used_port = start_flask(app, port)
-        if success:
-            actual_port[0] = used_port
+        return
 
     # Run Flask in background thread
-    flask_thread = threading.Thread(target=run_flask_server, daemon=True)
+    flask_thread = threading.Thread(target=start_flask, args=(app, port), daemon=True)
     flask_thread.start()
 
-    # Give Flask a moment to start and potentially find a new port
-    time.sleep(1)
-
-    # Start localhost.run with the actual port being used
-    start_localhost_run(actual_port[0])
+    # Start localhost.run with the provided port
+    start_localhost_run(port)
 
 
 def _entry_point():
