@@ -84,7 +84,10 @@ def serve_image(index: int) -> Union[Response, Tuple[str, int]]:
         or Tuple[str, int]: Error message and HTTP status code if image not found
     """
     if 0 <= index < config.total_images:
-        print(f"Serving image {index}: {config.image_list[index]}")
-        return send_file(config.image_list[index])
+        image_path = config.image_list[index]
+        # Ensure we're using the absolute path as a string
+        absolute_path = str(image_path.absolute())
+        print(f"Serving image {index}: {absolute_path}")
+        return send_file(absolute_path)
     print(f"Image not found at index {index}")
     return "Image not found", 404
