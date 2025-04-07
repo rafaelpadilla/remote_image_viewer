@@ -52,7 +52,7 @@ pip install -e .
 Run the server on your *remote machine (VM, EC2, etc.)*:
 
 ```bash
-python telepic <DIRECTORY-WITH-IMAGES> [OPTIONS]
+telepic <DIRECTORY-WITH-IMAGES> [OPTIONS]
 
 Options:
   --n INTEGER  Number of images to display per page (default: 20)
@@ -62,7 +62,7 @@ Options:
 
 Example:
 ```bash
-python telepic /path/to/images --n 30 --port 5000 --scrambled
+telepic /path/to/images --n 30 --port 5000 --scrambled
 ```
 
 This will start the server and generate a public URL via `localhost.run`. Open it in your browser and you're good to go!
