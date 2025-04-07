@@ -1,19 +1,48 @@
-# --- Approach 1: Using PEP 621 with setuptools ---
-
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my-project"
+name = "telepic"
 version = "0.1.0"
+description = "A lightweight CLI tool + web app for remotely viewing images from any machine in your browser. It is well-suited for sharing your images remotely."
+readme = "README.md"
 dependencies = [
   "flask==2.0.1",
   "Werkzeug==2.0.3",
   "Pillow==9.0.0",
   "python-dotenv==0.19.0",
-  "pytest==7.0.0",
-  "black==22.3.0",
-  "flake8==4.0.1",
-  "fire==0.5.0"
+  "fire==0.7.0"
 ]
+authors = [
+  { name = "Rafael Padilla" }
+]
+license="Apache 2.0"
+packages=["telepic"]
+keywords = ["telepic", "image-viewer", "remote-view", "cli-tool", "image-sharing", "remote-access", "localhost-tunnel", "web-gallery", "server-images"]
+
+
+[project.optional-dependencies]
+dev = [
+  "pytest==7.0.0",
+  "ruff==0.11.2",
+  "mypy==1.15.0",
+  "pytest-cov==6.0.0",
+  "types-setuptools==76.0.0.20250313",
+]
+
+[project.scripts]
+telepic = "telepic.main:_entry_point"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.format]
+quote-style = "double"
