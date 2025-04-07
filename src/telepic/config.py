@@ -7,7 +7,7 @@ from typing import Set, List, Optional
 
 # Static configuration constants
 ACCEPTED_IMAGE_EXTENSIONS: Set[str] = {".jpg", ".jpeg", ".png", ".gif", ".bmp"}
-DEFAULT_PORT: int = 5000
+DEFAULT_PORT: int = 8080
 DEFAULT_IMAGES_PER_PAGE: int = 20
 
 
