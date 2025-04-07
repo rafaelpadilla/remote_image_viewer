@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/telepic.png" alt="Telepic" width="400">
+  <img src="https://github.com/rafaelpadilla/telepic/blob/main/assets/telepic.png?raw=true" alt="Telepic" width="400">
 </p>
 
 # Telepic
