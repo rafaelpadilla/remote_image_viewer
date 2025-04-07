@@ -35,7 +35,6 @@ classifiers = [
 ]
 keywords = ["telepic", "image-viewer", "remote-view", "cli-tool", "image-sharing", "remote-access", "localhost-tunnel", "web-gallery", "server-images"]
 
-
 [project.optional-dependencies]
 dev = [
   "pytest==7.0.0",
