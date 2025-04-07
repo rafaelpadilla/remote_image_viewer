@@ -105,16 +105,28 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        .page-info {
+            margin: 0 10px;
+            line-height: 35px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
     <!-- Add header with logo -->
     <div class="header">
         <img src="{{ url_for('static', filename='telepic.png') }}" alt="Telepic Logo" class="logo">
-        <p>Total images: {{ total_images if total_images is defined else images|length }}</p>
+        <p>Total images: {{ total_images }}</p>
     </div>
 
-    <div class="image-grid">
+    <div class="image-grid" id="imageGrid">
         {% for index, image in images %}
             <div class="image-container">
                 <a href="{{ url_for('serve_image', index=index) }}" target="_blank" class="image-link">
@@ -128,76 +140,154 @@
         {% endfor %}
     </div>
 
+    <div id="loading" class="loading" style="display: none;">
+        Loading images...
+    </div>
+
     <div class="pagination">
         <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
-        <button id="nextPage" onclick="changePage(1)">Next</button>
+        <span id="pageInfo" class="page-info">Page {{ current_page + 1 }} of {{ (total_images + images_per_page - 1) // images_per_page }}</span>
+        <button id="nextPage" onclick="changePage(1)" {% if (current_page + 1) * images_per_page >= total_images %}disabled{% endif %}>Next</button>
     </div>
 
     <script>
         const imagesPerPage = {{ images_per_page }};
-        const imageContainers = document.querySelectorAll('.image-container');
-        let currentPage = 0;
-
-        function updateVisibility() {
-            const start = currentPage * imagesPerPage;
-            const end = start + imagesPerPage;
-
-            imageContainers.forEach((container, index) => {
-                container.style.display = (index >= start && index < end) ? 'block' : 'none';
-            });
-
-            document.getElementById('prevPage').disabled = currentPage === 0;
-            document.getElementById('nextPage').disabled = end >= imageContainers.length;
-        }
-
-        function changePage(delta) {
-            currentPage += delta;
-            updateVisibility();
-        }
+        const totalImages = {{ total_images }};
+        let currentPage = {{ current_page }};
+        let totalPages = Math.ceil(totalImages / imagesPerPage);
 
         // Add mouse tracking for hover zoom with boundary checking
-        document.querySelectorAll('.image-container').forEach(container => {
-            const hoverZoom = container.querySelector('.hover-zoom');
+        function setupHoverZoom() {
+            document.querySelectorAll('.image-container').forEach(container => {
+                const hoverZoom = container.querySelector('.hover-zoom');
+                if (!hoverZoom) return;
 
-            container.addEventListener('mousemove', (e) => {
-                const x = e.clientX;
-                const y = e.clientY;
+                container.addEventListener('mousemove', (e) => {
+                    const x = e.clientX;
+                    const y = e.clientY;
 
-                // Get viewport dimensions
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
+                    // Get viewport dimensions
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
 
-                // Get hover zoom dimensions
-                const hoverWidth = hoverZoom.offsetWidth;
-                const hoverHeight = hoverZoom.offsetHeight;
+                    // Get hover zoom dimensions
+                    const hoverWidth = hoverZoom.offsetWidth;
+                    const hoverHeight = hoverZoom.offsetHeight;
 
-                // Calculate position while keeping the hover zoom within viewport
-                let left = x;
-                let top = y;
+                    // Calculate position while keeping the hover zoom within viewport
+                    let left = x;
+                    let top = y;
 
-                // Adjust horizontal position
-                if (x + (hoverWidth / 2) > viewportWidth) {
-                    left = viewportWidth - (hoverWidth / 2);
-                } else if (x - (hoverWidth / 2) < 0) {
-                    left = hoverWidth / 2;
-                }
+                    // Adjust horizontal position
+                    if (x + (hoverWidth / 2) > viewportWidth) {
+                        left = viewportWidth - (hoverWidth / 2);
+                    } else if (x - (hoverWidth / 2) < 0) {
+                        left = hoverWidth / 2;
+                    }
 
-                // Adjust vertical position
-                if (y + (hoverHeight / 2) > viewportHeight) {
-                    top = viewportHeight - (hoverHeight / 2);
-                } else if (y - (hoverHeight / 2) < 0) {
-                    top = hoverHeight / 2;
-                }
+                    // Adjust vertical position
+                    if (y + (hoverHeight / 2) > viewportHeight) {
+                        top = viewportHeight - (hoverHeight / 2);
+                    } else if (y - (hoverHeight / 2) < 0) {
+                        top = hoverHeight / 2;
+                    }
 
-                // Apply the calculated position
-                hoverZoom.style.left = left + 'px';
-                hoverZoom.style.top = top + 'px';
-                hoverZoom.style.transform = 'translate(-50%, -50%)';
+                    // Apply the calculated position
+                    hoverZoom.style.left = left + 'px';
+                    hoverZoom.style.top = top + 'px';
+                    hoverZoom.style.transform = 'translate(-50%, -50%)';
+                });
             });
-        });
+        }
 
-        // Initialize page
-        updateVisibility();
+        // Initialize the page with event handlers
+        setupHoverZoom();
+
+        // Function to fetch images from the server
+        async function fetchImages(page) {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/images?page=${page}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch images');
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                return null;
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+
+        // Function to render images in the grid
+        function renderImages(images) {
+            const imageGrid = document.getElementById('imageGrid');
+            imageGrid.innerHTML = '';
+
+            images.forEach(image => {
+                const container = document.createElement('div');
+                container.className = 'image-container';
+
+                const link = document.createElement('a');
+                link.href = image.url;
+                link.className = 'image-link';
+                link.target = '_blank';
+
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = image.name;
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'image-name';
+                nameDiv.textContent = image.name;
+
+                const hoverDiv = document.createElement('div');
+                hoverDiv.className = 'hover-zoom';
+
+                const hoverImg = document.createElement('img');
+                hoverImg.src = image.url;
+                hoverImg.alt = image.name;
+
+                link.appendChild(img);
+                link.appendChild(nameDiv);
+                hoverDiv.appendChild(hoverImg);
+
+                container.appendChild(link);
+                container.appendChild(hoverDiv);
+                imageGrid.appendChild(container);
+            });
+
+            // Re-setup hover zoom for new images
+            setupHoverZoom();
+        }
+
+        // Function to update pagination UI
+        function updatePaginationUI() {
+            document.getElementById('prevPage').disabled = currentPage === 0;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages - 1;
+            document.getElementById('pageInfo').textContent = `Page ${currentPage + 1} of ${totalPages}`;
+        }
+
+        // Function to change the page
+        async function changePage(delta) {
+            const newPage = currentPage + delta;
+
+            if (newPage < 0 || newPage >= totalPages) {
+                return;
+            }
+
+            const data = await fetchImages(newPage);
+            if (data) {
+                currentPage = newPage;
+                renderImages(data.images);
+                updatePaginationUI();
+            }
+        }
     </script>
 </body>
 </html>

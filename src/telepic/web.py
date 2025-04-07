@@ -2,8 +2,8 @@
 Web views and Flask application for the telepic application.
 """
 
-from flask import Flask, render_template, send_file, Response
-from typing import Union, Tuple
+from flask import Flask, render_template, send_file, Response, jsonify, request
+from typing import Union, Tuple, Dict, Any
 
 from telepic.config import config
 
@@ -14,17 +14,60 @@ app = Flask(__name__)
 @app.route("/")
 def index() -> str:
     """
-    Render the main page with image grid.
+    Render the main page with the first page of images.
 
     Returns:
         str: Rendered HTML template for the index page
     """
-    print(f"Rendering index with {config.total_images} images")
+    page = request.args.get("page", 0, type=int)
+    start_idx = page * config.images_per_page
+    end_idx = min(start_idx + config.images_per_page, config.total_images)
+
+    # Get only the first page of images
+    current_page_images = []
+    if config.total_images > 0:
+        current_page_images = [
+            (i, config.image_list[i]) for i in range(start_idx, end_idx)
+        ]
+
+    print(f"Rendering index with {len(current_page_images)} images (page {page})")
     return render_template(
         "index.html",
-        images=enumerate(config.image_list),
+        images=current_page_images,
         images_per_page=config.images_per_page,
         total_images=config.total_images,
+        current_page=page,
+    )
+
+
+@app.route("/api/images")
+def get_images() -> Dict[str, Any]:
+    """
+    API endpoint to get a page of images.
+
+    Query Parameters:
+        page: The page number (0-indexed)
+
+    Returns:
+        Dict: JSON response with image data for the requested page
+    """
+    page = request.args.get("page", 0, type=int)
+    start_idx = page * config.images_per_page
+    end_idx = min(start_idx + config.images_per_page, config.total_images)
+
+    images_data = []
+    for i in range(start_idx, end_idx):
+        image_path = config.image_list[i]
+        images_data.append({"index": i, "name": image_path.name, "url": f"/image/{i}"})
+
+    return jsonify(
+        {
+            "images": images_data,
+            "page": page,
+            "total_pages": (config.total_images + config.images_per_page - 1)
+            // config.images_per_page,
+            "total_images": config.total_images,
+        }
     )
 
 
